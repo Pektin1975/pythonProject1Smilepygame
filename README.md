@@ -1,2 +1,3 @@
 # pythonProject1Smilepygame
-main eto smilik
+main это нарисованный смайлик
+4.py это второе задание,
