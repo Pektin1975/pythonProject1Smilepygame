@@ -1,14 +1,13 @@
-
 from random import choice
 from random import randint
 import pygame
 from math import *
 
 FPS = 30
-v_g=5 #skorost pushki
-number_of_targets=4 # kolvo targetov
-number_of_stargets = 2 # kolvo special targetov
-counter=0
+v_g = 5  # skorost pushki
+number_of_targets = 4  # kolvo targetov
+number_of_stargets = 2  # kolvo special targetov
+counter = 0
 
 RED = 0xFF0000
 BLUE = 0x0000FF
@@ -19,15 +18,18 @@ CYAN = 0x00FFCC
 BLACK = (0, 0, 0)
 WHITE = 0xFFFFFF
 GREY = 0x7D7D7D
-BLOOD=(200,0,0)
-GAME_COLORS = [RED, BLUE, GREEN, MAGENTA,(155,230,132),(0,234,140)]
+BLOOD = (200, 0, 0)
+GAME_COLORS = [RED, BLUE, GREEN, MAGENTA, (155, 230, 132), (0, 234, 140)]
 
-WIDTH = 800 #widtth ekran
-HEIGHT = 600 #height ekran
+WIDTH = 800  # widtth ekran
+HEIGHT = 600  # height ekran
+
+
 def rotate_rect(scr, x, y, a, b, alf, color):
     pygame.draw.polygon(scr, color, [(x, y), (x + a * cos(alf), y + a * sin(alf)),
-                                 (x + a * cos(alf) - b * sin(alf), y + a * sin(alf) + b * cos(alf)),
-                                 (x - b * sin(alf), y + b * cos(alf)), (x, y)])
+                                     (x + a * cos(alf) - b * sin(alf), y + a * sin(alf) + b * cos(alf)),
+                                     (x - b * sin(alf), y + b * cos(alf)), (x, y)])
+
 
 class Ball:
     def __init__(self, screen: pygame.Surface, x=40, y=450):
@@ -45,8 +47,8 @@ class Ball:
         self.vy = 0
         self.color = choice(GAME_COLORS)
         self.live = 30
-        self.acceleration=0.98
-        self.bullettype=1
+        self.acceleration = 0.98
+        self.bullettype = 1
 
     def move(self):
         """Переместить мяч по прошествии единицы времени.
@@ -55,17 +57,18 @@ class Ball:
         self.x и self.y с учетом скоростей self.vx и self.vy, силы гравитации, действующей на мяч,
         и стен по краям окна (размер окна 800х600).
         """
-        self.vy-=self.acceleration
+        self.vy -= self.acceleration
         self.x += self.vx
         self.y -= self.vy
-        if self.x<=0:
+        if self.x <= 0:
             self.vx = self.vx * (-1)
-        if self.x>=WIDTH:
+        if self.x >= WIDTH:
             self.vx = self.vx * (-1)
         if self.y <= 0:
-            self.vy= self.vy * (-1)
-        if self.y>=HEIGHT:
-            self.vy= self.vy * (-1)
+            self.vy = self.vy * (-1)
+        if self.y >= HEIGHT:
+            self.vy = self.vy * (-1)
+
     def move_2(self):
         self.vy += self.acceleration
         self.x += self.vx
@@ -87,7 +90,7 @@ class Ball:
             self.r
         )
 
-    def hittest(self, obj,i):
+    def hittest(self, obj, i):
         """Функция проверяет сталкивалкивается ли данный обьект с целью, описываемой в обьекте obj.
 
         Args:
@@ -100,6 +103,7 @@ class Ball:
             return True
         else:
             return False
+
     def bombhittest(self, obj):
         """Функция проверяет сталкивалкивается ли данный обьект с целью, описываемой в обьекте obj.
         Args:
@@ -114,17 +118,16 @@ class Ball:
             return False
 
 
-
-
 class Gun:
-    def __init__(self, screen,lives):
+    def __init__(self, screen, lives):
         self.screen = screen
         self.f2_power = 10
         self.f2_on = 0
         self.an = 1
         self.color = GREY
-        self.gunpos=WIDTH/2
-        self.lives=lives
+        self.gunpos = WIDTH / 2
+        self.lives = lives
+
     def fire2_start(self, event):
         self.f2_on = 1
 
@@ -138,7 +141,7 @@ class Gun:
         bullet += 1
         new_ball = Ball(self.screen)
         new_ball.r += 5
-        self.an = atan2((event.pos[1]-new_ball.y), (event.pos[0]-new_ball.x))
+        self.an = atan2((event.pos[1] - new_ball.y), (event.pos[0] - new_ball.x))
         new_ball.vx = self.f2_power * cos(self.an)
         new_ball.vy = - self.f2_power * sin(self.an)
         balls.append(new_ball)
@@ -159,11 +162,13 @@ class Gun:
             self.color = RED
         else:
             self.color = GREY
+
     def draw(self):
 
         rotate_rect(self.screen, self.gunpos, HEIGHT - 50, 15, 100, -pi / 2 + self.an, GREY)
         rotate_rect(self.screen, self.gunpos, HEIGHT - 50, 15, self.f2_power, -pi / 2 + self.an, self.color)
         pygame.draw.rect(self.screen, GREY, (self.gunpos - 50, HEIGHT - 65, 100, 50))
+
     def draw2(self):
 
         rotate_rect(self.screen, self.gunpos, HEIGHT - 50, 15, 100, -pi / 2 + self.an, GREY)
@@ -177,21 +182,22 @@ class Gun:
             self.color = RED
         else:
             self.color = GREY
+
     def gun_movement(self):
 
         global v_g
-        self.gunpos+=v_g
-        if self.gunpos<=50:
-            v_g=v_g*(-1)
-        if self.gunpos>=WIDTH-50:
-            v_g=v_g*(-1)
+        self.gunpos += v_g
+        if self.gunpos <= 50:
+            v_g = v_g * (-1)
+        if self.gunpos >= WIDTH - 50:
+            v_g = v_g * (-1)
 
     def draw_lives(self):
         for i in range(self.lives):
-            pygame.draw.circle(self.screen, BLOOD, (WIDTH / 2 + 20 * (2*i - self.lives / 2), 575), 15)
+            pygame.draw.circle(self.screen, BLOOD, (WIDTH / 2 + 20 * (2 * i - self.lives / 2), 575), 15)
             f1 = pygame.font.Font(None, 50)
             text1 = f1.render('Hp', True, (180, 0, 0))
-            screen.blit(text1, (WIDTH / 2 + 30 * (2*i - self.lives / 2), 575-40))
+            screen.blit(text1, (WIDTH / 2 + 30 * (2 * i - self.lives / 2), 575 - 40))
 
     def gun_hit(self):
         self.lives -= 1
@@ -204,12 +210,13 @@ class Gun:
 class Target:
     def __init__(self):
         self.screen = screen
-        self.x=[]
-        self.y=[]
-        self.color=(0,0,0)
-        self.r=[]
+        self.x = []
+        self.y = []
+        self.color = (0, 0, 0)
+        self.r = []
         self.velx = []
         self.vely = []
+
     def kill(self):
         self.points = 0
         self.live += 1
@@ -232,7 +239,7 @@ class Target:
         self.r = self.r[:i] + self.r[i + 1:]
         return 1
 
-    def draw(self,i):
+    def draw(self, i):
         self.x[i] += self.velx[i]
         self.y[i] += self.vely[i]
         if self.x[i] < self.r[i] or self.x[i] > WIDTH - self.r[i]:
@@ -240,12 +247,16 @@ class Target:
         if self.y[i] < self.r[i] or self.y[i] > HEIGHT - 150 - self.r[i]:
             self.vely[i] = self.vely[i] * (-1)
         pygame.draw.circle(self.screen, self.color, (self.x[i], self.y[i]), self.r[i])
+
+
 class SpecialTarget(Target):
     def __init__(self):
         super().__init__()
+
     def kill(self):
         self.slive += 1
         self.new_target()
+
     def new_target(self):
         self.x.append(randint(100, WIDTH - 100))
         self.y.append(randint(100, HEIGHT - 175))
@@ -253,7 +264,8 @@ class SpecialTarget(Target):
         self.velx.append(randint(-5, 5))
         self.vely.append(randint(-5, 5))
         self.color = CYAN
-    def draw(self,i):
+
+    def draw(self, i):
         self.x[i] += self.velx[i]
 
         if self.x[i] < self.r[i] or self.x[i] > WIDTH - self.r[i]:
@@ -261,6 +273,7 @@ class SpecialTarget(Target):
         if self.y[i] < self.r[i] or self.y[i] > HEIGHT - 150 - self.r[i]:
             self.vely[i] = self.vely[i] * (-1)
         pygame.draw.circle(self.screen, self.color, (self.x[i], self.y[i]), self.r[i])
+
     def hit(self):
 
         self.x = self.x[:i] + self.x[i + 1:]
@@ -301,15 +314,15 @@ pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 bullet = 0
 balls = []
-bombs=[]
+bombs = []
 clock = pygame.time.Clock()
-gun = Gun(screen,lives=5)
-gun2= Gun(screen,lives=4)
+gun = Gun(screen, lives=5)
+gun2 = Gun(screen, lives=4)
 target = Target()
-spec_target=SpecialTarget()
+spec_target = SpecialTarget()
 bomb = Bomb()
-target.live=0
-spec_target.slive=0
+target.live = 0
+spec_target.slive = 0
 bullet_type = 1
 finished = False
 
@@ -319,18 +332,18 @@ while not finished:
     gun2.draw()
     gun.draw_lives()
 
-    while target.live<number_of_targets:
+    while target.live < number_of_targets:
         target.kill()
-    while spec_target.slive<number_of_stargets:
+    while spec_target.slive < number_of_stargets:
         spec_target.kill()
     for i in range(target.live):
         target.draw(i)
     for i in range(spec_target.slive):
         spec_target.draw(i)
 
-    if randint(1, 25) == 12:      #chtobi bombi ne kazsdii sec fps povt
+    if randint(1, 25) == 12:  # chtobi bombi ne kazsdii sec fps povt
         bomb.create()
-    for b in balls: #otrisovka snaryadov
+    for b in balls:  # otrisovka snaryadov
         b.draw()
     for bomb in bombs:
         bomb.draw()
@@ -356,12 +369,12 @@ while not finished:
                 bullet_type = 1
             elif event.key == pygame.K_2:
                 bullet_type = 2
-    #snaryadi s norm graviti dlya isp nazhmi 1
+    # snaryadi s norm graviti dlya isp nazhmi 1
     if bullet_type == 1:
         for b in balls:
             b.move()
             for i in range(number_of_targets):
-                if b.hittest(target,i) and target.live and bullet_type == 1:
+                if b.hittest(target, i) and target.live and bullet_type == 1:
                     target.live -= 1
                     counter += target.hit()
                     target.kill()
@@ -378,7 +391,7 @@ while not finished:
         for b in balls:
             b.move_2()
             for i in range(number_of_targets):
-                if b.hittest(target ,i) and target.live and bullet_type == 2:
+                if b.hittest(target, i) and target.live and bullet_type == 2:
                     target.live -= 1
                     counter += target.hit()
                     target.kill()
@@ -405,12 +418,13 @@ while not finished:
                     finished = True
     gun.gun_movement()
     gun.power_up()
+
 while finished:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             finished = False
     f1 = pygame.font.Font(None, 50)
-    text2 = f1.render('Score='+str(counter), True, (180, 0, 0))
+    text2 = f1.render('Score=' + str(counter), True, (180, 0, 0))
     screen.blit(text2, (WIDTH / 2, HEIGHT / 2))
     pygame.display.update()
 pygame.quit()
