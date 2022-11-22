@@ -311,13 +311,15 @@ class Bomb(Ball, Target):
 
 
 pygame.init()
+bg=pygame.image.load("table.png")
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 bullet = 0
 balls = []
 bombs = []
 clock = pygame.time.Clock()
 gun = Gun(screen, lives=5)
-gun2 = Gun(screen, lives=4)
+
+
 target = Target()
 spec_target = SpecialTarget()
 bomb = Bomb()
@@ -329,7 +331,6 @@ finished = False
 while not finished:
     screen.fill(WHITE)
     gun.draw()
-    gun2.draw()
     gun.draw_lives()
 
     while target.live < number_of_targets:
@@ -356,14 +357,14 @@ while not finished:
             finished = True
         elif event.type == pygame.MOUSEBUTTONDOWN:
             gun.fire2_start(event)
-            gun2.fire2_start(event)
+
         elif event.type == pygame.MOUSEBUTTONUP:
             gun.fire2_end(event)
-            gun2.fire2_end(event)
+
 
         elif event.type == pygame.MOUSEMOTION:
             gun.targetting(event)
-            gun2.targetting(event)
+
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_1:
                 bullet_type = 1
@@ -428,3 +429,4 @@ while finished:
     screen.blit(text2, (WIDTH / 2, HEIGHT / 2))
     pygame.display.update()
 pygame.quit()
+print("na 1-odin tip patronov, na 2 vtoroyoy tip, zheltii shariki mozhno popast tolko 2 tipom")
